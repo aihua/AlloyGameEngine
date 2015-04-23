@@ -1,0 +1,86 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Alloy Render Engine</title>
+</head>
+<body>   
+ 
+    <div style="text-align:center;">
+        <canvas width="960" id="ourCanvas" height="640" style="border:1px solid #ccc;-webkit-tap-highlight-color: rgba(0, 0, 0, 0);"></canvas> 
+    </div>
+       <div style="text-align:center;">
+       鼠标放在Canvas里面然后滚动你的滚轮试试
+    </div> 
+     <a href="https://github.com/AlloyTeam/AlloyGameEngine" target="_blank" style="position:absolute;right:0;top:0;">
+<img src="../asset/img/github.png" alt="" />
+ </a>
+    <script src="../dist/are.js"></script>
+    <script src="../src/tiger_path.js"></script>
+    <script>
+        (function (ARE) {
+            var Stage = ARE.Stage, Shape = ARE.Shape;
+            var stage = new Stage("#ourCanvas");
+            //M = moveto
+            //L = lineto
+            //H = horizontal lineto
+            //V = vertical lineto
+            //C = curveto
+            //S = smooth curveto
+            //Q = quadratic Belzier curve
+            //T = smooth quadratic Belzier curveto
+            //A = elliptical Arc
+            //Z = closepath
+            //注释：以上所有命令均允许小写字母。大写表示绝对定位，小写表示相对定位。
+            var tiger = new Shape(600, 600);
+            var offsetX = 200, offsetY = 180;
+            for (var i = 0, len = tigerPath.length; i < len; i++) {
+                var pathDt = tigerPath[i];
+                var points = pathDt.path.split(/[M,L,H,V,C,S,Q,T,A,Z,m,l,h,v,c,s,q,t,a,z]/g);
+                points.shift();
+                var cmds = pathDt.path.match(/[M,L,H,V,C,S,Q,T,A,Z,m,l,h,v,c,s,q,t,a,z]/g);
+                tiger.beginPath();
+                tiger.strokeStyle(pathDt.stroke);
+                tiger.fillStyle(pathDt.fill);
+                for (var j = 0, cmdLen = cmds.length; j < cmdLen; j++) {
+                    var pArr = points[j].split(" ");
+                    if (cmds[j] == "M") {
+                        pArr[0] = parseFloat(pArr[0]) + offsetX;
+                        pArr[1] = parseFloat(pArr[1]) + offsetY;
+                        tiger.moveTo.apply(tiger, pArr);
+                    } else if (cmds[j] == "C") {
+                        pArr[0] = parseFloat(pArr[0]) + offsetX;
+                        pArr[2] = parseFloat(pArr[2]) + offsetX;
+                        pArr[4] = parseFloat(pArr[4]) + offsetX;
+                        pArr[1] = parseFloat(pArr[1]) + offsetY;
+                        pArr[3] = parseFloat(pArr[3]) + offsetY;
+                        pArr[5] = parseFloat(pArr[5]) + offsetY;
+                        tiger.bezierCurveTo.apply(tiger, pArr)
+                    } else if (cmds[j] == "L") {
+                        pArr[0] = parseFloat(pArr[0]) + offsetX;
+                        pArr[1] = parseFloat(pArr[1]) + offsetY;
+                        tiger.lineTo.apply(tiger, pArr);
+                    }
+                }
+                tiger.closePath();
+                tiger.stroke();
+                tiger.fill();
+            }
+            tiger.end();
+            stage.add(tiger);
+            tiger.scale = 0.5;
+            tiger.originX = tiger.originY = 0.5;
+            tiger.x = 350;
+            tiger.y = 300;
+            stage.onMouseWheel(function (event) {
+                if (event.delta < 0) {
+                    tiger.scale -= 0.05;
+                } else {
+                    tiger.scale += 0.05;
+                }
+                if (tiger.scale < 0) tiger.scale = 0;
+
+            })
+        })(ARE);
+    </script>
+</body>
+</html>
