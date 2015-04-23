@@ -1377,6 +1377,17 @@
                         return this._moveFPS;
                     }
                 });
+
+                this.canvas.addEventListener("mousemove", this._handleMouseMove.bind(this), false);
+                this.canvas.addEventListener("click", this._handleClick.bind(this), false);
+                this.canvas.addEventListener("mousedown", this._handleMouseDown.bind(this), false);
+                this.canvas.addEventListener("mouseup", this._handleMouseUp.bind(this), false);
+                this.canvas.addEventListener("dblclick", this._handleDblClick.bind(this), false);
+                this.addEvent(this.canvas, "mousewheel", this._handleMouseWheel.bind(this));
+
+                //document.addEventListener("DOMContentLoaded", this._initDomSurface.bind(this), false);
+                window.addEventListener("load", this._initDomSurface.bind(this), false);
+
             },
             "_initDebug": function () {
                 this.debugDiv = document.createElement("div");
@@ -1427,12 +1438,6 @@
                 this.domSurface.addEventListener("dblclick", this._handleDblClick.bind(this), false);
                 this.addEvent(this.domSurface, "mousewheel", this._handleMouseWheel.bind(this));
 
-                this.canvas.addEventListener("mousemove", this._handleMouseMove.bind(this), false);
-                this.canvas.addEventListener("click", this._handleClick.bind(this), false);
-                this.canvas.addEventListener("mousedown", this._handleMouseDown.bind(this), false);
-                this.canvas.addEventListener("mouseup", this._handleMouseUp.bind(this), false);
-                this.canvas.addEventListener("dblclick", this._handleDblClick.bind(this), false);
-                this.addEvent(this.canvas, "mousewheel", this._handleMouseWheel.bind(this));
 
                 window.addEventListener("resize", function () {
                     self.offset = self._getXY(self.canvas);
