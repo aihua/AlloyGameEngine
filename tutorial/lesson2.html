@@ -1,0 +1,48 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+</head>
+<body>
+    <div style="text-align:center;"></div>
+    <canvas width="200" height="200" id="ourCanvas" style="border:1px solid #ccc;"></canvas>
+     <script src="http://alloyteam.github.io/AlloyGameEngine/are.min.js"></script>
+    <script>
+        ; (function () {
+            var Stage = ARE.Stage, Bitmap = ARE.Bitmap,Container=ARE.Container;
+            var Button = Container.extend({
+                ctor: function (image) {
+                    this._super();
+                    this.bitmap = new Bitmap(image);
+                    this.bitmap.originX = this.bitmap.originY = 0.5;
+                    this.add(this.bitmap);
+                    //鼠标指针的形状
+                    this.cursor = "pointer";
+                    this._bindEvent();
+                },
+                _bindEvent: function () {
+                    this.onHover(function () {
+                        this.scale = 1.1;
+                    }, function () {
+                        this.scale = 1.0;
+                    })
+                    this.onMouseDown(function () {
+                        this.scale = 0.9;
+                    })
+                    this.onMouseUp(function () {
+                        this.scale = 1.1;
+                    })
+                }
+            });      
+            var  stage = new Stage("#ourCanvas");
+            var button = new Button("button.png");
+            button.x = 100;
+            button.y = 100;
+            button.onClick(function () {
+                console.log("你点击我了");
+            })
+            stage.add(button);
+        })();
+    </script>
+</body>
+</html>
