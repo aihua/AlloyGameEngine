@@ -25,8 +25,9 @@
 
             this.realTextbox = document.createElement("input");
             this.realTextbox.type = "text";
-            this.realTextbox.style.position = "absolute";      
-            this.realTextbox.style.top = "-2200px"
+            this.realTextbox.style.position = "fixed";
+            this.realTextbox.style.left = "-2200px"
+            this.realTextbox.style.top = "0px"
             document.body.appendChild(this.realTextbox);
          
             this.text = new Text("", this.option.fontSize+"px " +this.option.fontFamily,this.option.color);
