@@ -3,18 +3,6 @@ Alloy Game Engine
 
 一款强大的javascript游戏引擎.
 
-工具
-=================
-* [texture packer](https://www.codeandweb.com/texturepacker)
-* [tiled](http://www.mapeditor.org/)
-* [particle editor](http://alloyteam.github.io/ParticleEditor/)
-* [text to texture](http://alloyteam.github.io/AlloyRenderingEngine/example/glTxt.html)
-* [combine images](http://kmdjs.github.io/combineimages/)
-* [image splitter](http://kmdjs.github.io/imagesplitter/)
-* [thumbnail generator](http://kmdjs.github.io/thumbnailgenerator/)
-* [image zoom](http://kmdjs.github.io/zoom/)
-
-
 AlloyRenderingEngine
 =================
 超快的2d渲染引擎，支持webgl和canvas渲染
@@ -40,7 +28,7 @@ AlloyRenderingEngine
 ### 一分钟快速入门
 要实现下面的效果：
 
-![usage](https://raw.githubusercontent.com/AlloyTeam/AlloyGameEngine/master/asset/img/usage2.gif)
+![usage](https://raw.githubusercontent.com/AlloyTeam/AlloyGameEngine/master/example/asset/img/usage2.gif)
 
 可以使用下面的代码:
 
@@ -70,5 +58,22 @@ stage.onTick(function () {
 });
 ```
 
+教程
+=================
+* [AlloyRenderingEngine入门](http://www.alloyteam.com/2015/04/6726/)
+* [AlloyRenderingEngine之Shape](http://www.alloyteam.com/2015/04/alloyrenderingengine-zhi-shape/)
+* [AlloyRenderingEngine继承](http://www.alloyteam.com/2015/04/alloyrenderingengine-ji-cheng/)
+* [AlloyRenderingEngine文本框组件](http://www.alloyteam.com/2015/05/alloyrenderingengine-wen-ben-kuang-zu-jian/)
+
+工具推荐
+=================
+* [texture packer](https://www.codeandweb.com/texturepacker)
+* [tiled](http://www.mapeditor.org/)
+* [particle editor](http://alloyteam.github.io/ParticleEditor/)
+* [text to texture](http://alloyteam.github.io/AlloyRenderingEngine/example/glTxt.html)
+* [combine images](http://kmdjs.github.io/combineimages/)
+* [image splitter](http://kmdjs.github.io/imagesplitter/)
+* [thumbnail generator](http://kmdjs.github.io/thumbnailgenerator/)
+* [image zoom](http://kmdjs.github.io/zoom/)
 
 This content is released under the (http://opensource.org/licenses/MIT) MIT License.
