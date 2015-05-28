@@ -6,20 +6,28 @@
 <body>   
     <div style="text-align:center;"><canvas width="480" id="ourCanvas" height="480" style="border:1px solid #ccc;-webkit-tap-highlight-color: rgba(0, 0, 0, 0);background-color:black;"></canvas> 
            <div style="text-align:center;">移动鼠标改变发射点位置</div>
-          <div style="text-align:center;">FPS:<span id="fps"></span></div>
+        
     </div>
    
    <a href="https://github.com/AlloyTeam/AlloyGameEngine" target="_blank" style="position:absolute;right:0;top:0;">
-<img src="../asset/img/github.png" alt="" />
+<img src="asset/img/github.png" alt="" />
  </a>
+         <div style="text-align:center;">
+                  <select id="rdSlt">
+         <option value="0">WebGL渲染</option>
+         <option value="1">Canvas渲染</option>
+     </select>
+
+ </div>
 
     <script src="../dist/are.js"></script>
-
+	<script src="src/render-control.js"></script>
     <script>
         (function (ARE) {
-            var Stage = ARE.Stage, Bitmap = ARE.Bitmap, ParticleSystem = ARE.ParticleSystem, Shape = ARE.Shape, Loader = ARE.Loader, Text = ARE.Text, Vector2 = ARE.Vector2, FPS = ARE.FPS, Sprite = ARE.Sprite;
+            
+            var Stage = ARE.Stage, Bitmap = ARE.Bitmap, ParticleSystem = ARE.ParticleSystem, Shape = ARE.Shape, Loader = ARE.Loader, Label = ARE.Label, Vector2 = ARE.Vector2, FPS = ARE.FPS, Sprite = ARE.Sprite;
 
-            var stage = new Stage("#ourCanvas");
+            var stage = new Stage("#ourCanvas", localStorage.webgl == "1");
 
             var ps = new ParticleSystem({
                 emitX: 200,
@@ -42,11 +50,10 @@
                 ps.emitY = evt.stageY;
             })
 
-            var fpsDiv = document.getElementById("fps");
+           
 
 
-
-            var bmp = new Bitmap("../asset/img/atLogo.png");
+            var bmp = new Bitmap("asset/img/atLogo.png");
             //（0.5,0.5）==〉The center is the point of rotation
             bmp.originX = 0.5;
             bmp.originY = 0.5;
@@ -59,11 +66,10 @@
             })
             //add object to stage
             stage.add(bmp);
-
+            stage.debug = true;
             var step = 0.01;
             //loop
             stage.onTick(function () {
-                fpsDiv.innerHTML = FPS.get();
                 bmp.rotation += 0.5;
                 if (bmp.scaleX > 1 || bmp.scaleX < 0.5) {
                     step *= -1;
@@ -85,8 +91,8 @@
             shape.x = shape.y = 100;
             stage.add(shape);
 
-            var txt = new Text({
-                txt: "Alloy Game Engine",
+            var txt = new Label({
+                value: "Alloy Game Engine",
                 fontSize: 25,
                 fontFamily: "arial",
                 color: "#ffffff"
@@ -97,9 +103,9 @@
 
             var ld = new Loader()
             ld.loadRes([
-                { id: "kmd", src: "../asset/img/kmd.png" },
-                { id: "pig", src: "../asset/img/pig.png" },
-                { id: "hero", src: "../asset/img/hero-m.png" }]
+                { id: "kmd", src: "asset/img/kmd.png" },
+                { id: "pig", src: "asset/img/pig.png" },
+                { id: "hero", src: "asset/img/hero-m.png" }]
                 );
             ld.complete(function () {
                 var sprite = new Sprite({
