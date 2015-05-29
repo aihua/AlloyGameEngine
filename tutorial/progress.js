@@ -1,8 +1,8 @@
 ﻿; (function () {
     //先把要使用类的赋给临时变量，以后就不用打点了:)
-    var Stage = ARE.Stage, Container = ARE.Container, Graphics = ARE.Graphics;
+    var Stage = are.Stage, Container = are.Container, Graphics = are.Graphics;
     //文本框集成自容器
-    ARE.Progress = Container.extend({
+    are.Progress = Container.extend({
         //构造函数
         ctor: function (option) {
             //把容器的属性和方法搞给自己
@@ -21,7 +21,7 @@
             this.bar = new Graphics()
             this.add(this.bar);
             this.bar.fillStyle(option.fillColor || "green").fillRect(2, 2, barWidth < 0 ? 0 : barWidth, option.height - 4);
-            this.pilot = new ARE.ParticleSystem({
+            this.pilot = new are.ParticleSystem({
                 emitX: 0,
                 emitY:0,
                 speed:10,
@@ -39,7 +39,7 @@
             this.height = option.height;
             this.fillColor = option.fillColor;
 
-            ARE.Observe(this, "value", function (name, value) {
+            are.Observe(this, "value", function (name, value) {
              
                 if (value >= 1) {
                     this.pilot.maxCount = 0;

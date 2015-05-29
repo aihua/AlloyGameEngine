@@ -1,8 +1,8 @@
 ﻿/// <reference path="are.js" />
 ; (function () {
-    var Stage = ARE.Stage,  Container = ARE.Container, Graphics = ARE.Graphics, Text = ARE.Text;
+    var Stage = are.Stage,  Container = are.Container, Graphics = are.Graphics, Text = are.Text;
 
-    ARE.Textbox = Container.extend({
+    are.Textbox = Container.extend({
         ctor: function (option) {
             this._super();
 
