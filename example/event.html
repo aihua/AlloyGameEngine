@@ -28,16 +28,12 @@
                 bmp.originY = 0.5;
                 bmp.cursor = "move";
                 bmp.x = stage.width / 2;
-                bmp.y = stage.height / 2;
-                var ctt = new Container();
-               
-                ctt.add(bmp);
+                bmp.y = stage.height / 2;              
                 bmp.onPressMove(function (evt) {
                     this.x = evt.stageX;
                     this.y = evt.stageY;
                 })
-
-                stage.add(ctt);
+               stage.add(bmp);
 
                 var bmp2 = new Bitmap(ld.get("hero"));
                 bmp2.cursor = "pointer";
