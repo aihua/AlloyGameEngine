@@ -2166,7 +2166,7 @@ ARE.Vector2 = Class.extend({
 //begin-------------------ARE.Renderer---------------------begin
 
 ARE.Renderer = Class.extend({
-    "ctor": function(stage, closegl) {
+    "ctor": function (stage, openWebGL) {
         this.stage = stage;
         this.objs = [];
         this.width = this.stage.width;
@@ -2181,7 +2181,7 @@ ARE.Renderer = Class.extend({
                     return false;
                 }
             }();
-        if (webglSupport && !closegl) {
+        if (webglSupport && openWebGL) {
             this.renderingEngine = new ARE.WebGLRenderer(this.stage.canvas);
         } else {
             if (canvasSupport) {
@@ -2381,7 +2381,7 @@ ARE.CanvasRenderer = Class.extend({
     "_bubbleEvent": function(o, type, event) {
         var result = o.execEvent(type, event);
         if (result !== false) {
-            if (o.parent && o.parent.events[type] && o.parent.events[type].length > 0 && o.parent.baseInstanceof !== "Stage") {
+            if (o.parent && o.parent.events && o.parent.events[type] && o.parent.events[type].length > 0 && o.parent.baseInstanceof !== "Stage") {
                 this._bubbleEvent(o.parent, type, event);
             }
         }
@@ -2413,6 +2413,12 @@ ARE.CanvasRenderer = Class.extend({
             ctx.setTransform(mtx.a, mtx.b, mtx.c, mtx.d, mtx.tx, mtx.ty);
             ctx.drawImage(mmyCanvas, 0, 0);
         } else if (o instanceof ARE.Bitmap || o instanceof ARE.Sprite) {
+            if (o._clipFn) {
+                ctx.beginPath();
+                o._clipFn(ctx);
+                ctx.closePath();
+                ctx.clip();
+            } 
             var rect = o.rect;
             ctx.setTransform(mtx.a, mtx.b, mtx.c, mtx.d, mtx.tx, mtx.ty);
             ctx.drawImage(o.img, rect[0], rect[1], rect[2], rect[3], 0, 0, rect[2], rect[3]);
@@ -2964,11 +2970,25 @@ ARE.DisplayObject = Class.extend({
 ARE.Bitmap = ARE.DisplayObject.extend({
     "ctor": function(img) {
         this._super();
+        Object.defineProperty(this, "rect", {
+            get: function () {
+                return this["__rect"];
+            },
+            set: function (value) {
+                this["__rect"] = value;
+                this.width = value[2];
+                this.height = value[3];
+                this.regX = value[2] * this.originX;
+                this.regY = value[3] * this.originY;
+            }
+        });
         if (arguments.length === 0) return;
         if (typeof img == "string") {
             this._initWithSrc(img);
+            this.imgSrc = img;
         } else {
             this._init(img);
+            this.imgSrc = img.src;
         }
     },
     "_initWithSrc": function(img) {
@@ -2980,12 +3000,8 @@ ARE.Bitmap = ARE.DisplayObject.extend({
             this.textureReady = false;
             this.img = document.createElement("img");
             this.img.crossOrigin = "Anonymous";
-            this.img.onload = function() {
+            this.img.onload = function () {
                 if (!self.rect) self.rect = [0, 0, self.img.width, self.img.height];
-                self.width = self.rect[2];
-                self.height = self.rect[3];
-                self.regX = self.width * self.originX;
-                self.regY = self.height * self.originY;
                 ARE.Bitmap[img] = self.img;
                 self.textureReady = true;
                 self.imageLoadHandle && self.imageLoadHandle();
@@ -2999,18 +3015,6 @@ ARE.Bitmap = ARE.DisplayObject.extend({
         this.img = img;
         this.width = img.width;
         this.height = img.height;
-        Object.defineProperty(this, "rect", {
-            get: function() {
-                return this["__rect"];
-            },
-            set: function(value) {
-                this["__rect"] = value;
-                this.width = value[2];
-                this.height = value[3];
-                this.regX = value[2] * this.originX;
-                this.regY = value[3] * this.originY;
-            }
-        });
         this.rect = [0, 0, img.width, img.height];
     },
     "useImage": function(img) {
@@ -3024,11 +3028,21 @@ ARE.Bitmap = ARE.DisplayObject.extend({
     "onImageLoad": function(fn) {
         this.imageLoadHandle = fn;
     },
-    "clone": function() {
-        var o = new ARE.Bitmap(this.img);
-        o.rect = this.rect.slice(0);
-        this.cloneProps(o);
-        return o;
+    "clone": function () {
+        if (this.textureReady) {
+            var o = new ARE.Bitmap(this.img);
+            o.rect = this.rect.slice(0);
+            this.cloneProps(o);
+            return o;
+        } else {
+            var o = new ARE.Bitmap(this.imgSrc);
+            this.rect&&(o.rect = this.rect.slice(0));
+            this.cloneProps(o);
+            return o;
+        }
+    },
+    "clip": function (fn) {
+        this._clipFn = fn;
     },
     "flipX": function() {},
     "flipY": function() {}
@@ -3501,6 +3515,11 @@ ARE.ParticleSystem = ARE.Container.extend({
         bitmap.filter = this.filter;
         this.filterTexture = bitmap.cacheCanvas;
     },
+    "changeFilter": function (filter) {
+        var bitmap = new ARE.Bitmap(this.texture);
+        bitmap.filter = filter;
+        this.filterTexture = bitmap.cacheCanvas;
+    },
     "emit": function() {
         var angle = (this.angle + ARE.Util.random(-this.angleRange / 2, this.angleRange / 2)) * Math.PI / 180;
         var halfX = this.emitArea[0] / 2,
@@ -3902,7 +3921,7 @@ ARE.Sprite = ARE.DisplayObject.extend({
 //begin-------------------ARE.Stage---------------------begin
 
 ARE.Stage = ARE.Container.extend({
-    "ctor": function(canvas, closegl) {
+    "ctor": function(canvas, openWebGL) {
         this._super();
         this.canvas = typeof canvas == "string" ? document.querySelector(canvas) : canvas;
         this.width = this.canvas.width;
@@ -3913,7 +3932,7 @@ ARE.Stage = ARE.Container.extend({
         this.hitCanvas = document.createElement("canvas");
         this.hitCanvas.width = 1;
         this.hitCanvas.height = 1;
-        this.stageRenderer = new ARE.Renderer(this, closegl);
+        this.stageRenderer = new ARE.Renderer(this, openWebGL);
         this.hitCtx = this.hitCanvas.getContext("2d");
         this._scaleX = this._scaleY = null;
         this.offset = this._getXY(this.canvas);
@@ -3923,10 +3942,14 @@ ARE.Stage = ARE.Container.extend({
         this.interval = Math.floor(1e3 / this.fps);
         this.toList = [];
         this.tickFns = [];
+        this.beginTick = null;
+        this.endTick = null;
         var self = this;
         self.loop = setInterval(function() {
             if (self._paused) return;
+            self.beginTick && self.beginTick();
             self._tick(self);
+            self.endTick && self.endTick();
         }, self.interval);
         Object.defineProperty(this, "useRequestAnimFrame", {
             set: function(value) {
