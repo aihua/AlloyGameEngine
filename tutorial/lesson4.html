@@ -13,8 +13,9 @@
     <script src="progress.js"></script>
     <script>
         ; (function () {
-            var stage = new are.Stage("#ourCanvas", true);
-            var progress = new are.Progress({
+            var stage = new ARE.Stage("#ourCanvas");
+            stage.hitAABB = false;
+            var progress = new ARE.Progress({
                 width: 200,
                 height: 20,
                 borderColor: "#3d3d3d",
@@ -28,7 +29,7 @@
                 progress.value = current;
             })
             stage.add(progress);
-
+            
             progress.cursor = "pointer";
             progress.onClick(function (evt) {
                 current = progress.value = (evt.stageX - progress.x) / progress.width;
