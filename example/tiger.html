@@ -3,7 +3,7 @@
 <head>
     <title>Alloy Render Engine</title>
 </head>
-<body>   
+<body style="height:2000px;">   
  
     <div style="text-align:center;">
         <canvas width="960" id="ourCanvas" height="640" style="border:1px solid #ccc;-webkit-tap-highlight-color: rgba(0, 0, 0, 0);"></canvas> 
@@ -78,7 +78,7 @@
                     tiger.scale += 0.05;
                 }
                 if (tiger.scale < 0) tiger.scale = 0;
-
+                event.preventDefault();
             })
         })(ARE);
     </script>
